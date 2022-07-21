@@ -1,6 +1,6 @@
 from typing import Union
 import pydantic
-from fastapi import FastAPI
+from fastapi import FastAPI, File, Form, UploadFile, status
 
 app = FastAPI()
 
@@ -40,3 +40,21 @@ async def register_user(user_data: UserIn):
 async def register_user_out(user_data: UserIn):
     user_in_db = UserInDB(**user_data.dict(), hashed_password="123")
     return user_in_db
+
+
+@app.post("/login/", response_model=dict[str, str], status_code=status.HTTP_201_CREATED)
+async def register(username: str = Form(), password: str = Form()):
+    return {
+        "message": "user was created successfully!",
+        "username": username,
+        "password": password,
+    }
+
+
+@app.post("/uploadfiles/")
+async def upload_files(
+    file_a: bytes = File(),
+    file_b: UploadFile = File(),
+    title: str = Form(),
+):
+    return len(file_a)
